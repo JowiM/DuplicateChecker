@@ -17,8 +17,10 @@ bool Checker::process(tDuplicated& duplicate)
 	//Recursively get all files in directory
 	//Done so progress can be calculated!
 	parseDir(gDir, allFiles);
-
 	std::cout << "Total Files found :" << allFiles.size() << std::endl;
+
+	findDuplicates(allFiles, duplicate);
+
 	return false;
 }
 
@@ -51,4 +53,43 @@ bool Checker::parseDir(std::string &dir, FileContainer &lsFile)
 	}
 
 	return true;
+}
+
+bool Checker::findDuplicates(FileContainer fList, tDuplicated duplicated)
+{
+	std::map<std::size_t, std::string> fileMap;
+
+	for (FileContainer::iterator file = fList.begin(); file != fList.end(); file++){
+		std::size_t tmpHash = hashFile(*file);
+		
+		if (tmpHash == 0){
+			std::cout << "CANNOT BE ACCESSED or EMPTY!" << std::endl;
+			continue;
+		}
+
+		if (fileMap.find(tmpHash) == fileMap.end()){
+			//Add hash to file Map
+			fileMap[tmpHash] = *file;
+		}
+		else {
+			duplicated[tmpHash].push_back(*file);
+			std::cout << "DUPLICATED!! " << *file << " - " << fileMap[tmpHash] << std::endl;
+		}
+	}
+
+	std::cout << "Duplicate Files " << duplicated.size() << std::endl;
+	
+	return true;
+}
+
+/**
+* @todo this methods requires updated. Not the most efficient!!! Loads all file in memory!!
+**/
+std::size_t Checker::hashFile(std::string &fPath)
+{
+	std::fstream targetFile(fPath);
+	std::string loadFile((std::istreambuf_iterator<char>(targetFile)), std::istreambuf_iterator<char>());
+
+	boost::hash<std::string> generateHash;
+	return generateHash(loadFile);
 }

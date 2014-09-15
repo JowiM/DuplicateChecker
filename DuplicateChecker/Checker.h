@@ -12,7 +12,7 @@
 #include <boost\functional\hash.hpp>
 
 typedef std::list<std::string> FileContainer;
-typedef std::map<std::string, FileContainer > tDuplicated;
+typedef std::map<std::size_t, FileContainer > tDuplicated;
 
 class Checker
 {
@@ -29,6 +29,9 @@ private:
 	*/
 	bool parseDir(std::string &dir, FileContainer &lsFile);
 
+	bool findDuplicates(FileContainer fList, tDuplicated duplicated);
+
+	std::size_t hashFile(std::string &fPath);
 public:
 
 	/**
