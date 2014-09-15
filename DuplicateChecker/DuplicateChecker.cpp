@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "Checker.h"
+#include "ShellInterface.h"
+
+using namespace ublue;
 
 int main(int argc, char** argv)
 {
@@ -17,6 +20,9 @@ int main(int argc, char** argv)
 	Checker dirChecker(dir);
 	dirChecker.process(duplicatedFiles);
 	
+	ShellInterface shellUI(duplicatedFiles);
+	shellUI.start();
+
 	return 0;
 }
 

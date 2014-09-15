@@ -1,6 +1,8 @@
 #ifndef _H_Checker
 #define _H_Checker
 
+#include "gDuplicate.h"
+
 #include <iostream>
 #include <fstream>
 #include <streambuf>
@@ -11,44 +13,43 @@
 #include <boost\filesystem.hpp>
 #include <boost\functional\hash.hpp>
 
-typedef std::list<std::string> FileContainer;
-typedef std::map<std::size_t, FileContainer > tDuplicated;
+namespace ublue{
+	class Checker
+	{
+	private:
+		const int DEBUG = 1;
 
-class Checker
-{
-private:
-	const int DEBUG = 1;
+		/**
+		* Hold directory to check
+		*/
+		std::string gDir;
 
-	/**
-	* Hold directory to check
-	*/
-	std::string gDir;
+		/**
+		* Parse directory and store files in them
+		*/
+		bool parseDir(std::string &dir, FileContainer &lsFile);
 
-	/**
-	* Parse directory and store files in them
-	*/
-	bool parseDir(std::string &dir, FileContainer &lsFile);
+		bool findDuplicates(FileContainer fList, tDuplicated duplicated);
 
-	bool findDuplicates(FileContainer fList, tDuplicated duplicated);
+		std::size_t hashFile(std::string &fPath);
+	public:
 
-	std::size_t hashFile(std::string &fPath);
-public:
+		/**
+		* Constructor
+		*/
+		Checker(std::string& dir);
 
-	/**
-	* Constructor
-	*/
-	Checker(std::string& dir);
-	
-	/**
-	* Destructor
-	*/
-	~Checker();
+		/**
+		* Destructor
+		*/
+		~Checker();
 
-	/**
-	* Initialize Checker!!
-	* @param reference to hold duplicate files
-	*/
-	bool process(tDuplicated& duplicate);
-};
+		/**
+		* Initialize Checker!!
+		* @param reference to hold duplicate files
+		*/
+		bool process(tDuplicated& duplicate);
+	};
+}
 
 #endif

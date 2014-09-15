@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Checker.h"
 
+using namespace ublue;
 
 Checker::Checker(std::string& dir)
 {
@@ -78,7 +79,6 @@ bool Checker::findDuplicates(FileContainer fList, tDuplicated duplicated)
 	}
 
 	std::cout << "Duplicate Files " << duplicated.size() << std::endl;
-	
 	return true;
 }
 
