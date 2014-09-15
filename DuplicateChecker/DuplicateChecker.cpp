@@ -2,10 +2,21 @@
 //
 
 #include "stdafx.h"
+#include "Checker.h"
 
-
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char** argv)
 {
+	if (argc < 2) {
+		std::cout << "!!Missing Args!! - Please enter directory!" << std::endl;
+		return -1;
+	}
+
+	tDuplicated duplicatedFiles;
+	std::string dir = argv[1];
+	
+	Checker dirChecker(dir);
+	dirChecker.process(duplicatedFiles);
+	
 	return 0;
 }
 
