@@ -5,7 +5,15 @@
 #include <list>
 #include <map>
 
+
+
 typedef std::list<std::string> FileContainer;
-typedef std::map<std::size_t, FileContainer > tDuplicated;
+
+struct duplicateInfo {
+	FileContainer files;
+	float totalSize;
+	float avgFileSize;
+};
+typedef std::map<std::string, struct duplicateInfo > tDuplicated;
 
 #endif

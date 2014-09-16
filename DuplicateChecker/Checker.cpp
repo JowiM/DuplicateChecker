@@ -6,26 +6,25 @@ using namespace ublue;
 Checker::Checker(std::string& dir)
 {
 	gDir = dir;
+	checkProgress = 0;
 }
 
 
 Checker::~Checker() {}
 
-bool Checker::process(tDuplicated& duplicate)
+void Checker::process(tDuplicated& duplicate)
 {
 	FileContainer allFiles;
 
 	//Recursively get all files in directory
 	//Done so progress can be calculated!
 	parseDir(gDir, allFiles);
-	std::cout << "Total Files found :" << allFiles.size() << std::endl;
 
+	//Process found files to check for duplicates
 	findDuplicates(allFiles, duplicate);
-
-	return false;
 }
 
-bool Checker::parseDir(std::string &dir, FileContainer &lsFile)
+void Checker::parseDir(std::string &dir, FileContainer &lsFile)
 {
 	boost::filesystem::directory_iterator begin(dir);
 	boost::filesystem::directory_iterator end;
@@ -35,6 +34,7 @@ bool Checker::parseDir(std::string &dir, FileContainer &lsFile)
 		std::string filePath = begin->path().string();
 		//Get File Status
 		boost::filesystem::file_status fStatus = boost::filesystem::status(*begin);
+		
 		//Check what type the file is. Directory or File??
 		//@todo check whether microsoft has symbolic link and FIFO files features
 		switch (fStatus.type())
@@ -52,48 +52,70 @@ bool Checker::parseDir(std::string &dir, FileContainer &lsFile)
 			}
 		}
 	}
-
-	return true;
 }
 
-bool Checker::findDuplicates(FileContainer fList, tDuplicated &duplicated)
+void Checker::calculateProgress(int totalFiles, float current)
 {
-	std::map<std::size_t, std::string> fileMap;
+	if (current == 1){
+		std::cout << "Progress: (10 '#' == 100%) [#";
+	}
 
+	float numOfHash = (current / totalFiles)*10;
+	
+	if ((checkProgress+1) < numOfHash){
+		std::cout << "#";
+		checkProgress++;
+	}
+
+	if (totalFiles == current){
+		std::cout << "]" << std::endl;
+	}
+}
+
+void Checker::findDuplicates(FileContainer& fList, tDuplicated &duplicated)
+{
+	std::map<std::string, std::string> fileMap;
+	int numbFiles = fList.size();
+	int count = 0;
 	for (FileContainer::iterator file = fList.begin(); file != fList.end(); file++){
-		std::size_t tmpHash = hashFile(*file);
-		
-		if (tmpHash == 0){
-			std::cout << "CANNOT BE ACCESSED or EMPTY!" << std::endl;
-			continue;
-		}
+		std::string checksum;
 
-		if (fileMap.find(tmpHash) == fileMap.end()){
-			//Add hash to file Map
-			fileMap[tmpHash] = *file;
+		//Hash File
+		hashFile(*file, checksum);
+	
+		calculateProgress(numbFiles, ++count);
+
+		//@todo check for empty??
+		//Check if checksum is already in Map
+		if (fileMap.find(checksum) == fileMap.end()){
+			//Original checksum add hash to file Map
+			fileMap[checksum] = *file;
 		}
 		else {
 			//Check if hash already init in duplicated map. If not add the file found in fileMap.
-			if (duplicated.find(tmpHash) == duplicated.end()){
-				duplicated[tmpHash].push_back(fileMap[tmpHash]);
+			if (duplicated.find(checksum) == duplicated.end()){
+				duplicated[checksum].files.push_back(fileMap[checksum]);
+				duplicated[checksum].totalSize += boost::filesystem::file_size(fileMap[checksum]);
 			}
-			duplicated[tmpHash].push_back(*file);
-			//std::cout << "DUPLICATED!! " << *file << " - " << fileMap[tmpHash] << std::endl;
+			//add duplicate file
+			duplicated[checksum].files.push_back(*file);
+			duplicated[checksum].totalSize += boost::filesystem::file_size(*file);
+			duplicated[checksum].avgFileSize = boost::filesystem::file_size(*file);
 		}
 	}
-
-	std::cout << "Duplicate Files " << duplicated.size() << std::endl;
-	return true;
 }
 
-/**
-* @todo this methods requires updated. Not the most efficient!!! Loads all file in memory!!
-**/
-std::size_t Checker::hashFile(std::string &fPath)
-{
-	std::fstream targetFile(fPath);
-	std::string loadFile((std::istreambuf_iterator<char>(targetFile)), std::istreambuf_iterator<char>());
 
-	boost::hash<std::string> generateHash;
-	return generateHash(loadFile);
+void Checker::hashFile(std::string &fPath, std::string &checksum)
+{
+	CryptoPP::SHA1 hash;
+	try {
+		CryptoPP::FileSource(fPath.c_str(), true,
+			new CryptoPP::HashFilter(hash, new CryptoPP::HexEncoder(
+			new CryptoPP::StringSink(checksum), true)));
+	}
+	catch (const std::exception& ex)
+	{
+		errorFiles.push_back(fPath);
+	}
 }

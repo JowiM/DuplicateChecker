@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 	Checker dirChecker(dir);
 	dirChecker.process(duplicatedFiles);
 
-	std::cout << "Duplicate Files please: " << duplicatedFiles.size() << std::endl;
+	std::cout << "You have -" << duplicatedFiles.size() << "- files which have multiple copies!" << std::endl << std::endl;
 
 	//Handle User Actions on files
 	ShellInterface shellUI(duplicatedFiles);

@@ -3,6 +3,9 @@
 
 #include "gDuplicate.h"
 #include <iostream>
+
+typedef std::map<int, std::string> traceLine;
+
 namespace ublue {
 	class ShellInterface
 	{
@@ -12,6 +15,8 @@ namespace ublue {
 		void outputDuplicate();
 
 		void processInput(std::string input);
+
+		void expandTrace(std::string &s, char delimiter, traceLine &result);
 	public:
 		ShellInterface(tDuplicated &duplicated);
 		~ShellInterface();

@@ -11,7 +11,9 @@
 #include <string>
 
 #include <boost\filesystem.hpp>
-#include <boost\functional\hash.hpp>
+#include <cryptopp\sha.h>
+#include <cryptopp\hex.h>
+#include <cryptopp\files.h>
 
 namespace ublue{
 	class Checker
@@ -19,19 +21,25 @@ namespace ublue{
 	private:
 		const int DEBUG = 1;
 
+		int checkProgress;
+
 		/**
 		* Hold directory to check
 		*/
 		std::string gDir;
 
+		std::list<std::string> errorFiles;
+
 		/**
 		* Parse directory and store files in them
 		*/
-		bool parseDir(std::string &dir, FileContainer &lsFile);
+		void parseDir(std::string &dir, FileContainer &lsFile);
 
-		bool findDuplicates(FileContainer fList, tDuplicated &duplicated);
+		void findDuplicates(FileContainer& fList, tDuplicated &duplicated);
 
-		std::size_t hashFile(std::string &fPath);
+		void calculateProgress(int totalFiles, float current);
+
+		void hashFile(std::string &fPath, std::string& checksum);
 	public:
 
 		/**
@@ -48,7 +56,7 @@ namespace ublue{
 		* Initialize Checker!!
 		* @param reference to hold duplicate files
 		*/
-		bool process(tDuplicated& duplicate);
+		void process(tDuplicated& duplicate);
 	};
 }
 
