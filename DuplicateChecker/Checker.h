@@ -4,8 +4,6 @@
 #include "gDuplicate.h"
 
 #include <iostream>
-#include <fstream>
-#include <streambuf>
 #include <list>
 #include <map>
 #include <string>
