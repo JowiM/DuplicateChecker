@@ -56,7 +56,7 @@ bool Checker::parseDir(std::string &dir, FileContainer &lsFile)
 	return true;
 }
 
-bool Checker::findDuplicates(FileContainer fList, tDuplicated duplicated)
+bool Checker::findDuplicates(FileContainer fList, tDuplicated &duplicated)
 {
 	std::map<std::size_t, std::string> fileMap;
 
@@ -73,8 +73,12 @@ bool Checker::findDuplicates(FileContainer fList, tDuplicated duplicated)
 			fileMap[tmpHash] = *file;
 		}
 		else {
+			//Check if hash already init in duplicated map. If not add the file found in fileMap.
+			if (duplicated.find(tmpHash) == duplicated.end()){
+				duplicated[tmpHash].push_back(fileMap[tmpHash]);
+			}
 			duplicated[tmpHash].push_back(*file);
-			std::cout << "DUPLICATED!! " << *file << " - " << fileMap[tmpHash] << std::endl;
+			//std::cout << "DUPLICATED!! " << *file << " - " << fileMap[tmpHash] << std::endl;
 		}
 	}
 

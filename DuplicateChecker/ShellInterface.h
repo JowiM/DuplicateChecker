@@ -8,6 +8,10 @@ namespace ublue {
 	{
 	private:
 		tDuplicated lDuplicated;
+
+		void outputDuplicate();
+
+		void processInput(std::string input);
 	public:
 		ShellInterface(tDuplicated &duplicated);
 		~ShellInterface();

@@ -29,7 +29,7 @@ namespace ublue{
 		*/
 		bool parseDir(std::string &dir, FileContainer &lsFile);
 
-		bool findDuplicates(FileContainer fList, tDuplicated duplicated);
+		bool findDuplicates(FileContainer fList, tDuplicated &duplicated);
 
 		std::size_t hashFile(std::string &fPath);
 	public:
