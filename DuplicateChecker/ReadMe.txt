@@ -1,3 +1,8 @@
+============================= Execute Program ================
+
+The application expects a directory which will be parsed. Open the terminal an execute the file as follows:
+	DuplicateChecker.exe C:\User\test\development
+
 ========================================================================
     CONSOLE APPLICATION : DuplicateChecker Project Overview
 ========================================================================
