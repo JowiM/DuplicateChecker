@@ -44,6 +44,7 @@ void Checker::parseDir(std::string &dir, FileContainer &lsFile)
 			parseDir(filePath, lsFile);
 			break;
 		case boost::filesystem::regular_file:
+			//Normal file add to list
 			lsFile.push_back(filePath);
 			break;
 		default:
@@ -60,8 +61,9 @@ void Checker::calculateProgress(int totalFiles, float current)
 		std::cout << "Progress: (10 '#' == 100%) [#";
 	}
 
+	//Calculate progress
 	float numOfHash = (current / totalFiles)*10;
-	
+	//Check whether another hash needs to be outputted
 	if ((checkProgress+1) < numOfHash){
 		std::cout << "#";
 		checkProgress++;
@@ -116,6 +118,7 @@ void Checker::hashFile(std::string &fPath, std::string &checksum)
 	}
 	catch (const std::exception& ex)
 	{
+		//Some files that are open and being written too cannot be hashed
 		errorFiles.push_back(fPath);
 	}
 }

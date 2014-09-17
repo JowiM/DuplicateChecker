@@ -5,10 +5,14 @@
 #include <list>
 #include <map>
 
-
-
+/**
+* Used to contain files
+*/
 typedef std::list<std::string> FileContainer;
 
+/**
+* Struct to hold details about a duplicate record
+*/
 struct duplicateInfo {
 	FileContainer files;
 	float totalSize;

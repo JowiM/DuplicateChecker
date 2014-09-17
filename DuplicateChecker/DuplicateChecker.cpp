@@ -14,13 +14,17 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
+	std::cout << "!--------------- Scanning Directories & Processing Duplicate ---------------!" << std::endl;
+
 	tDuplicated duplicatedFiles;
 	std::string dir = argv[1];
+
 	//Calculate which files are duplicated
 	Checker dirChecker(dir);
 	dirChecker.process(duplicatedFiles);
 
 	std::cout << "You have -" << duplicatedFiles.size() << "- files which have multiple copies!" << std::endl << std::endl;
+	std::cout << "!---------------------------------------------------------------------------!" << std::endl;
 
 	//Handle User Actions on files
 	ShellInterface shellUI(duplicatedFiles);
